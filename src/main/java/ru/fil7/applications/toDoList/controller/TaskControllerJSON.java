@@ -92,5 +92,16 @@ public class TaskControllerJSON {
         return new ResponseEntity<>(task, HttpStatus.BAD_REQUEST);
     }
 
+    @RequestMapping(value = TaskRestURIConstants.CHANGE_TASK_STATE, method = RequestMethod.POST,
+            headers = "Content-Type=application/json")
+    public ResponseEntity<Task> changeTaskState(@RequestBody Task updatedTask) {
+        if (updatedTask != null && updatedTask.getId() > 0) {
+            Task task = taskService.getTaskById(updatedTask.getId());
+            task.setState(updatedTask.getState());
+            taskService.updateTask(task);
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(updatedTask, HttpStatus.BAD_REQUEST);
+    }
 
 }

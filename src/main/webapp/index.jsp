@@ -20,7 +20,7 @@
     <div class="container">
         <div class="well well-sm">
             <!-- Form Add Task -->
-            <div id ="add-task-form" class="row">
+            <div id="add-task-form" class="row">
                 <div class="col-xs-12">
                     <form class="form-inline">
                         <div class="form-group">
@@ -33,7 +33,7 @@
             </div>
 
             <!-- Filters -->
-            <div id ="filters" class="row">
+            <div id="filters" class="row">
                 <div class="col-xs-12">
                     <form class="form-inline" ng-hide="displayEditMode">
                         <button type="button" class="btn btn-default filter" ng-click="getAllTasks()">
@@ -58,7 +58,8 @@
                     <!-- Form Non Edit Mode -->
                     <form class="form-inline" ng-hide="displayEditMode">
                         <div class="form-group">
-                            <input type="checkbox" ng-model="taskCompleted">
+                            <input type="checkbox" ng-model="taskCompleted"
+                                   ng-init="taskCompleted=(task.state === 1)" ng-click="changeState(task)">
                         </div>
                         <div class="form-group" ng-class="{ 'line-through': taskCompleted }">
                             <div>{{ task.description }}</div>
@@ -77,7 +78,8 @@
                         <div class="form-group">
                             <input type="text" class="form-control" ng-model="task.description">
                         </div>
-                        <button type="button" class="btn btn-default btn-s" ng-click="editTask(task); displayEditMode=!displayEditMode">
+                        <button type="button" class="btn btn-default btn-s"
+                                ng-click="editTask(task); displayEditMode=!displayEditMode">
                             <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save task
                         </button>
                     </form>

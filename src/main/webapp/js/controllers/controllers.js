@@ -9,6 +9,7 @@ app.controller('todoListCtrl', ['$scope', 'TaskService',
         var addTaskUrl = '/rest/tasks/add';
         var removeTaskUrl = '/rest/remove/task';
         var editTaskUrl = '/rest/edit/task';
+        var completeTaskUrl = '/rest/change-task-state';
 
         $scope.page = 1;
         $scope.pageNumber = 10;
@@ -33,6 +34,12 @@ app.controller('todoListCtrl', ['$scope', 'TaskService',
                 JSON.stringify({id: task.id, description: task.description}), function(){});
         };
 
+        $scope.changeState = function(task) {
+            task.state = task.state ? 0 : 1;
+            TaskService.postRequest(completeTaskUrl,
+                JSON.stringify({id: task.id, description: task.description, state: task.state}), function(){});
+        };
+
         $scope.getAllTasks = function() {
             TaskService.getTasksByUrl(allTasksUrl)
                 .success(function(data) {
@@ -54,6 +61,6 @@ app.controller('todoListCtrl', ['$scope', 'TaskService',
                 });
         };
 
-        $scope.getAllTasks();
+        $scope.getUncompletedTasks();
 
     }]);

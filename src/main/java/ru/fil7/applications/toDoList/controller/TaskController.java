@@ -81,7 +81,7 @@ public class TaskController {
         return "taskdata";
     }
 
-    @RequestMapping(TaskRestURIConstants.TASK_IS_DONE)
+    @RequestMapping(TaskRestURIConstants.TASK_IS_DONE_ID)
     public String completeTask(@PathVariable("id") int id) {
         Task task = taskService.getTaskById(id);
         if (task.getState() == 0) {
