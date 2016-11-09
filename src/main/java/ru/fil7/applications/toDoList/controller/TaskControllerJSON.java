@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.fil7.applications.toDoList.model.Task;
@@ -47,18 +49,6 @@ public class TaskControllerJSON {
         return taskService.getAllTasks(TaskFilter.COMPLETED_TASKS);
     }
 
-    @RequestMapping(value = TaskRestURIConstants.ADD_TASK, method = RequestMethod.POST)
-    public
-    @ResponseBody
-    void addTask(@ModelAttribute("task") Task task) {
-        logger.info("Start addTask.");
-        if (task.getId() == 0) {
-            taskService.addTask(task);
-        } else {
-            taskService.updateTask(task);
-        }
-    }
-
     @RequestMapping(value = TaskRestURIConstants.GET_TASK)
     public
     @ResponseBody
@@ -66,5 +56,41 @@ public class TaskControllerJSON {
         logger.info("Start taskData.");
         return taskService.getTaskById(id);
     }
+
+    @RequestMapping(value = TaskRestURIConstants.ADD_TASK, method = RequestMethod.POST,
+            headers = "Content-Type=application/json")
+    public ResponseEntity<Task> addTask(@RequestBody Task task) {
+        logger.info("Start addTask.");
+        if (task != null) {
+            if (task.getId() == 0) {
+                taskService.addTask(task);
+            } else {
+                taskService.updateTask(task);
+            }
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(task, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = TaskRestURIConstants.REMOVE_TASK, method = RequestMethod.POST,
+            headers = "Content-Type=application/json")
+    public ResponseEntity<Task> removeTask(@RequestBody Task task) {
+        if (task != null && task.getId() > 0) {
+            taskService.removeTask(task.getId());
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(task, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = TaskRestURIConstants.EDIT_TASK, method = RequestMethod.POST,
+            headers = "Content-Type=application/json")
+    public ResponseEntity<Task> editTask(@RequestBody Task task) {
+        if (task != null && task.getId() > 0) {
+            taskService.updateTask(task);
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(task, HttpStatus.BAD_REQUEST);
+    }
+
 
 }

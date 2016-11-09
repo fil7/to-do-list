@@ -1,3 +1,16 @@
 .line-through {
     text-decoration: line-through;
 }
+.btn-s{
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 0px;
+    padding: 5px 10px;
+}
+
+.well{
+    width: 40%;
+}
+#filters filter {
+    display: inline-block;
+    float: left;
+}

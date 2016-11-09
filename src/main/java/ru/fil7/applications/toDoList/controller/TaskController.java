@@ -59,14 +59,14 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
-    @RequestMapping(TaskRestURIConstants.REMOVE_TASK)
+    @RequestMapping(TaskRestURIConstants.REMOVE_TASK_ID)
     public String removeTask(@PathVariable("id") int id) {
         taskService.removeTask(id);
 
         return "redirect:/tasks";
     }
 
-    @RequestMapping(TaskRestURIConstants.EDIT_TASK)
+    @RequestMapping(TaskRestURIConstants.EDIT_TASK_ID)
     public String editTask(@PathVariable("id") int id, Model model) {
         model.addAttribute("task", taskService.getTaskById(id));
         model.addAttribute("listTasks", this.taskService.getAllTasks(TaskFilter.ALL_TASKS));
