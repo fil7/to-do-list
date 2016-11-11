@@ -14,6 +14,7 @@ import ru.fil7.applications.toDoList.service.TaskService;
 import java.util.List;
 
 @RequestMapping("/rest")
+
 @Controller
 public class TaskControllerJSON {
     private static final Logger logger = LoggerFactory.getLogger(TaskControllerJSON.class);
@@ -25,36 +26,23 @@ public class TaskControllerJSON {
         this.taskService = taskService;
     }
 
-    @RequestMapping(value = TaskRestURIConstants.GET_ALL_TASKS, method = RequestMethod.GET)
+    @RequestMapping(value = TaskRestURIConstants.GET_TASKS, method = RequestMethod.GET)
     public
     @ResponseBody
-    List<Task> getAllTasks() {
-        logger.info("Start getAllTasks.");
-        return taskService.getAllTasks(TaskFilter.ALL_TASKS);
+    List<Task> getAllTasks(@PathVariable("filter") String filter) {
+        return taskService.getAllTasks(TaskFilter.findByAbbr(filter));
     }
 
-    @RequestMapping(value = TaskRestURIConstants.GET_UNCOMPLETED_TASKS, method = RequestMethod.GET)
+    @RequestMapping(value = TaskRestURIConstants.GET_TASK, method = RequestMethod.GET)
     public
     @ResponseBody
-    List<Task> getAllUncompletedTasks() {
-        logger.info("Start getAllUncompletedTasks.");
-        return taskService.getAllTasks(TaskFilter.UNCOMPLETED_TASKS);
-    }
-
-    @RequestMapping(value = TaskRestURIConstants.GET_COMPLETED_TASKS, method = RequestMethod.GET)
-    public
-    @ResponseBody
-    List<Task> getAllCompletedTasks() {
-        logger.info("Start getAllCompletedTasks.");
-        return taskService.getAllTasks(TaskFilter.COMPLETED_TASKS);
-    }
-
-    @RequestMapping(value = TaskRestURIConstants.GET_TASK)
-    public
-    @ResponseBody
-    Task taskData(@PathVariable("id") int id) {
+    Task taskData(@RequestBody Task task) {
         logger.info("Start taskData.");
-        return taskService.getTaskById(id);
+        if (checkTask(task)) {
+            return taskService.getTaskById(task.getId());
+        } else {
+            return null;
+        }
     }
 
     @RequestMapping(value = TaskRestURIConstants.ADD_TASK, method = RequestMethod.POST,
@@ -75,7 +63,7 @@ public class TaskControllerJSON {
     @RequestMapping(value = TaskRestURIConstants.REMOVE_TASK, method = RequestMethod.POST,
             headers = "Content-Type=application/json")
     public ResponseEntity<Task> removeTask(@RequestBody Task task) {
-        if (task != null && task.getId() > 0) {
+        if (checkTask(task)) {
             taskService.removeTask(task.getId());
             return new ResponseEntity<>(task, HttpStatus.OK);
         }
@@ -85,7 +73,7 @@ public class TaskControllerJSON {
     @RequestMapping(value = TaskRestURIConstants.EDIT_TASK, method = RequestMethod.POST,
             headers = "Content-Type=application/json")
     public ResponseEntity<Task> editTask(@RequestBody Task task) {
-        if (task != null && task.getId() > 0) {
+        if (checkTask(task)) {
             taskService.updateTask(task);
             return new ResponseEntity<>(task, HttpStatus.OK);
         }
@@ -95,7 +83,7 @@ public class TaskControllerJSON {
     @RequestMapping(value = TaskRestURIConstants.CHANGE_TASK_STATE, method = RequestMethod.POST,
             headers = "Content-Type=application/json")
     public ResponseEntity<Task> changeTaskState(@RequestBody Task updatedTask) {
-        if (updatedTask != null && updatedTask.getId() > 0) {
+        if (checkTask(updatedTask)) {
             Task task = taskService.getTaskById(updatedTask.getId());
             task.setState(updatedTask.getState());
             taskService.updateTask(task);
@@ -103,5 +91,22 @@ public class TaskControllerJSON {
         }
         return new ResponseEntity<>(updatedTask, HttpStatus.BAD_REQUEST);
     }
+
+    @RequestMapping(value = TaskRestURIConstants.GET_PAGE, method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<Task> getPage(@PathVariable("filter") String filterId,
+                       @PathVariable("start") int start,
+                       @PathVariable("size") int size
+                       ) {
+        logger.info("Start getAllTasks.");
+        return taskService.getAllTasksPaginated(TaskFilter.findByAbbr(filterId), start, size);
+    }
+
+    private boolean checkTask(Task task) {
+        return task != null && task.getId() > 0;
+    }
+
+
 
 }

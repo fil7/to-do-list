@@ -4,8 +4,7 @@ app.service('TaskService', [
     '$http',
     function($http) {
         // synch
-        this.getTasksByUrl = function(// page, limit,
-                                      url) {
+        this.getTasksByUrl = function(url) {
             return $http.get(url)
                 .success(function(data) {
                     return data;
@@ -28,3 +27,7 @@ app.service('TaskService', [
         };
 
     }]);
+
+app.factory('TaskPagination', ['$resource', function($resource) {
+    return $resource('/rest/tasks/:filterId');
+}]);

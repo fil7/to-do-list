@@ -18,5 +18,5 @@ public interface TaskService {
     List<Task> getAllTasks(TaskFilter filter);
 
     // Pagination
-    List<Task> getAllTasksPaginated(int start, int size);
+    List<Task> getAllTasksPaginated(TaskFilter filter, int start, int size);
 }

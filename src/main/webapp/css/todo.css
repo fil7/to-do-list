@@ -14,3 +14,7 @@
     display: inline-block;
     float: left;
 }
+.active-filter {
+    border: 2px #337ab7 solid;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}

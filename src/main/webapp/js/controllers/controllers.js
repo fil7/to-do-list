@@ -1,24 +1,28 @@
 'use strict';
 
-app.controller('todoListCtrl', ['$scope', 'TaskService',
+app.controller('TodoListController', ['$scope', 'TaskService',
     function($scope, TaskService) {
 
-        var allTasksUrl = '/rest/tasks';
-        var completedTasksUrl = '/rest/tasks/completed-tasks';
-        var uncompletedTasksUrl = '/rest/tasks/uncompleted-tasks';
+        $scope.page = 0;
+        $scope.pageNumber = 10;
+        $scope.filter = '/active';
+
+        var getTasksUrl = '/rest/tasks';
         var addTaskUrl = '/rest/tasks/add';
         var removeTaskUrl = '/rest/remove/task';
         var editTaskUrl = '/rest/edit/task';
         var completeTaskUrl = '/rest/change-task-state';
 
-        $scope.page = 1;
-        $scope.pageNumber = 10;
+        var disableLeft = true;
+        var disableRight = true;
+
+        /** CRUD **/
 
         $scope.addTask = function(task) {
             var addedTask = {description: task, state: 0};
             TaskService.postRequest(addTaskUrl,
                 JSON.stringify(addedTask), function() {
-                    $scope.tasks.push(addedTask);
+                    $scope.tasks.unshift(addedTask);
                 });
             $scope.newTask = '';
         };
@@ -27,40 +31,87 @@ app.controller('todoListCtrl', ['$scope', 'TaskService',
             TaskService.postRequest(removeTaskUrl,
                 JSON.stringify({id: task.id, description: task.description}), function() {
                     $scope.tasks.splice($index, 1);
-            });
+                });
         };
         $scope.editTask = function(task) {
             TaskService.postRequest(editTaskUrl,
-                JSON.stringify({id: task.id, description: task.description}), function(){});
+                JSON.stringify({id: task.id, description: task.description}), function() {
+                });
         };
 
         $scope.changeState = function(task) {
             task.state = task.state ? 0 : 1;
             TaskService.postRequest(completeTaskUrl,
-                JSON.stringify({id: task.id, description: task.description, state: task.state}), function(){});
-        };
-
-        $scope.getAllTasks = function() {
-            TaskService.getTasksByUrl(allTasksUrl)
-                .success(function(data) {
-                    $scope.tasks = data;
+                JSON.stringify({id: task.id, description: task.description, state: task.state}), function() {
                 });
         };
 
-        $scope.getCompletedTasks = function() {
-            TaskService.getTasksByUrl(completedTasksUrl)
+        /** Filters **/
+
+        $scope.getAllTasks = function($event) {
+            $scope.filter = '/all';
+            showTasks($event);
+        };
+
+        $scope.getActiveTasks = function($event) {
+            $scope.filter = '/active';
+            showTasks($event);
+        };
+
+        $scope.getCompletedTasks = function($event) {
+            $scope.filter = '/completed';
+            showTasks($event);
+        };
+
+        function showTasks($event) {
+            doActiveFilter($event);
+            clearPage();
+            getTasks(getTasksUrl + $scope.filter + "/" + $scope.page * $scope.pageNumber + "/" + $scope.pageNumber);
+        }
+
+        function getTasks(url) {
+            TaskService.getTasksByUrl(url)
                 .success(function(data) {
                     $scope.tasks = data;
                 });
+        }
+
+        function doActiveFilter($event) {
+            if ($event) {
+                document.querySelector('.active-filter').classList.remove('active-filter');
+                $event.currentTarget.classList.add('active-filter');
+            }
+        }
+
+        function clearPage() {
+            $scope.page = 0;
+        }
+
+        /** Pagination Controller **/
+
+        var paginationUrl = '/rest/tasks'; // /tasks/{filter}/{start}/{size}
+
+        $scope.prevPage = function() {
+            if ($scope.page - 1 >= 0) {
+                var startIndex = --$scope.page * $scope.pageNumber;
+                TaskService.getTasksByUrl(paginationUrl + $scope.filter + "/" + startIndex + '/' + $scope.pageNumber)
+                    .success(function(data) {
+                        $scope.tasks = data;
+                    });
+            }
         };
 
-        $scope.getUncompletedTasks = function() {
-            TaskService.getTasksByUrl(uncompletedTasksUrl)
+        $scope.nextPage = function() {
+            var startIndex = ($scope.page + 1) * $scope.pageNumber;
+            TaskService.getTasksByUrl(paginationUrl + $scope.filter + "/" + startIndex + '/' + $scope.pageNumber)
                 .success(function(data) {
-                    $scope.tasks = data;
+                    if (data.length > 0) {
+                        $scope.page++;
+                        $scope.tasks = data;
+                    }
                 });
         };
 
-        $scope.getUncompletedTasks();
+        $scope.getActiveTasks();
 
     }]);

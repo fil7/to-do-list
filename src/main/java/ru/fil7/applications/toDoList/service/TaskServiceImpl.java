@@ -5,7 +5,7 @@ import ru.fil7.applications.toDoList.controller.TaskFilter;
 import ru.fil7.applications.toDoList.dao.TaskDao;
 import ru.fil7.applications.toDoList.model.Task;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,9 +51,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public List<Task> getAllTasksPaginated(int start, int size) {
-        List<Task> list = taskDao.listTasks();
-        if (start + size > list.size()) return new ArrayList<>();
+    public List<Task> getAllTasksPaginated(TaskFilter filter, int start, int size) {
+        List<Task> list = getAllTasks(filter);
+        if (start + size > list.size()) {
+            if (start < list.size()) {
+                return list.subList(start, list.size());
+            } else {
+                return Collections.EMPTY_LIST;
+            }
+        }
         return list.subList(start, start + size);
     }
 
