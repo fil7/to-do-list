@@ -4,8 +4,14 @@ app.controller('TodoListController', ['$scope', 'TaskService',
     function($scope, TaskService) {
 
         $scope.page = 0;
-        $scope.pageNumber = 10;
+        $scope.pageNumber = 7;
         $scope.filter = '/active';
+        $scope.priority = 0; // Normal
+        $scope.priorities = [
+            {value: '0', name: 'Low'},
+            {value: '1', name: 'Medium'},
+            {value: '2', name: 'High'}
+        ];
 
         var getTasksUrl = '/rest/tasks';
         var addTaskUrl = '/rest/tasks/add';
@@ -13,38 +19,39 @@ app.controller('TodoListController', ['$scope', 'TaskService',
         var editTaskUrl = '/rest/edit/task';
         var completeTaskUrl = '/rest/change-task-state';
 
-        var disableLeft = true;
-        var disableRight = true;
-
         /** CRUD **/
 
-        $scope.addTask = function(task) {
-            var addedTask = {description: task, state: 0};
-            TaskService.postRequest(addTaskUrl,
-                JSON.stringify(addedTask), function() {
-                    $scope.tasks.unshift(addedTask);
-                });
-            $scope.newTask = '';
+        $scope.addTask = function($event) {
+            if ($event.keyCode == 13 && $scope.newTask) {
+                var addedTask = {description: $scope.newTask, priority: $scope.priority};
+                TaskService.postRequest(addTaskUrl,
+                    addedTask, function() {
+                        $scope.tasks.unshift(addedTask);
+                    });
+                $scope.newTask = '';
+            }
         };
 
         $scope.removeTask = function(task, $index) {
             TaskService.postRequest(removeTaskUrl,
-                JSON.stringify({id: task.id, description: task.description}), function() {
+                {id: task.id, description: task.description}, function() {
                     $scope.tasks.splice($index, 1);
                 });
         };
         $scope.editTask = function(task) {
             TaskService.postRequest(editTaskUrl,
-                JSON.stringify({id: task.id, description: task.description}), function() {
+                {id: task.id, description: task.description, priority: task.priority},
+                function() {
                 });
         };
 
         $scope.changeState = function(task) {
-            task.state = task.state ? 0 : 1;
             TaskService.postRequest(completeTaskUrl,
-                JSON.stringify({id: task.id, description: task.description, state: task.state}), function() {
+                {id: task.id, description: task.description, state: !task.state},
+                function() {
                 });
         };
+
 
         /** Filters **/
 
@@ -111,6 +118,7 @@ app.controller('TodoListController', ['$scope', 'TaskService',
                     }
                 });
         };
+
 
         $scope.getActiveTasks();
 

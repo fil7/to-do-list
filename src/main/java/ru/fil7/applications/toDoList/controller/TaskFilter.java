@@ -19,7 +19,7 @@ public enum TaskFilter implements Predicate<Task> {
     }
 
     static boolean isCompleted(Task task) {
-        return task.getState() == 1;
+        return task.getState();
     }
 
     public boolean test(Task s) {

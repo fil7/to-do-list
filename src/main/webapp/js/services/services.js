@@ -17,7 +17,7 @@ app.service('TaskService', [
             return $http({
                 url: url,
                 method: "POST",
-                data: data,
+                data: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
             }).success(function(data, status, headers, config) {
                 callback();
