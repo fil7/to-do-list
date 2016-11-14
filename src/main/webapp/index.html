@@ -78,7 +78,7 @@
                             <input type="checkbox" ng-model="taskCompleted"
                                    ng-init="taskCompleted=task.state" ng-click="changeState(task)">
                         </div>
-                        <div class="form-group" ng-class="{ 'line-through': taskCompleted }" ng-click="taskCompleted.click">
+                        <div class="form-group" ng-class="{ 'line-through': taskCompleted }">
                             <div ng-class="{'lowPriority': task.priority == 0, 'mediumPriority': task.priority == 1, 'highPriority': task.priority == 2}">
                                 {{ task.description }}
                             </div>
