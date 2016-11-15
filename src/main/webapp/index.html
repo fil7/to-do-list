@@ -6,6 +6,7 @@
           href="https://fonts.googleapis.com/css?family=Tangerine">
     <!-- Include the AngularJS library -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-resource.min.js"></script>
 </head>
 
 <body ng-app="todoList">
@@ -28,7 +29,7 @@
                     <form class="form-inline">
                         <input id="add-task" autofocus type="text" class="form-control" placeholder="Add a task"
                                ng-model="newTask"
-                               ng-disabled="filter==='/completed'"
+                               ng-disabled="filter==='completed'"
                                ng-maxlength="255"
                                ng-keyup="addTask($event)"
                         >
@@ -36,7 +37,7 @@
                                 ng-model="priority"
                                 ng-change="task.priority = taskPriority;"
                                 ng-selected="priority=priorities[0].value"
-                                ng-disabled="filter==='/completed'">
+                                ng-disabled="filter==='completed'">
                             <option value="" hidden/>
                             <option ng-repeat="p in priorities" value="{{ p.value }}"
                             >{{ p.name }}
@@ -70,7 +71,7 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <div ng-repeat="task in tasks | orderBy:'-createdDate' | limitTo: pageNumber ">
+                <div ng-repeat="task in tasks | limitTo: pageNumber ">
 
                     <!-- Form Non Edit Mode -->
                     <form class="form-inline" ng-hide="displayEditMode">
@@ -100,7 +101,7 @@
                         <select class="form-control selcls priority"
                                 ng-model="taskPriority"
                                 ng-change="task.priority = taskPriority;"
-                                ng-disabled="filter==='/completed'">
+                                ng-disabled="filter==='completed'">
 
                             <option value="" hidden/>
                             <option ng-repeat="p in priorities" value="{{ p.value }}"
@@ -143,6 +144,7 @@
 
 <!-- Services -->
 <script src="js/services/services.js"></script>
+<script src="js/factories/requests.js"></script>
 
 <!-- Directives -->
 </body>

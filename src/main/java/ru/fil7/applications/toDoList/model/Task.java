@@ -19,6 +19,7 @@ public class Task {
     private boolean state;
 
     @Column(name = "CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     @Column(name = "PRIORITY")
@@ -49,11 +50,7 @@ public class Task {
     }
 
     public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+        return new Date(createdDate.getTime());
     }
 
     public int getPriority() {

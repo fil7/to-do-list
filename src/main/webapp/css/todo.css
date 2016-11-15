@@ -13,9 +13,7 @@ body {
 
 .well {
     width: 60%;
-    opacity: 0.8;
-    background-color: white;
-    font-weight: bold;
+    background-color: whitesmoke;
 }
 
 .line-through {
@@ -64,7 +62,7 @@ select.priority{
 
 }
 .filter:hover {
-    border: 3px #4EB1BA solid;
+    border: 1px #4EB1BA solid;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 .lowPriority{

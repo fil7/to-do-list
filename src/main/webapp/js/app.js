@@ -1,3 +1,3 @@
 'use strict';
 
-var app = angular.module('todoList',[]);
+var app = angular.module('todoList',['ngResource']);

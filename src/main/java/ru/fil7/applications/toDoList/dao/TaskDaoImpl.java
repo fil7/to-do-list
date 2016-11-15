@@ -36,7 +36,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public void removeTask(int id) {
         Session session = sessionFactory.getCurrentSession();
-        Task task = (Task) session.get(Task.class, new Integer(id));
+        Task task = (Task) session.get(Task.class, Integer.valueOf(id));
         if (task != null) {
             session.delete(task);
         }
@@ -46,7 +46,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public Task getTaskById(int id) {
         Session session = sessionFactory.getCurrentSession();
-        Task task = (Task) session.get(Task.class, new Integer(id));
+        Task task = (Task) session.get(Task.class, Integer.valueOf(id));
         return task;
     }
 
